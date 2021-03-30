@@ -1,0 +1,10 @@
+{
+  "name": "nvm-github-actions-example",
+  "private": true,
+  "scripts": {
+    "test": "true"
+  },
+  "dependencies": {
+    "left-pad": "^1.3.0"
+  }
+}

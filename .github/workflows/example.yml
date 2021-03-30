@@ -1,0 +1,73 @@
+# This workflow demonstrates how to use nvm and npm with caching in GitHub Actions.
+name: Example
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  schedule:
+  - cron: '0 0 * * 6'
+
+jobs:
+
+  example:
+    name: "Example"
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    # This step looks up the location of the nvm cache directory. In practice,
+    # this is "$NVM_DIR/.cache" so you could hard-code that value instead.
+    - name: Introspect nvm
+      # This step, and all others that use the nvm command, must run in a login
+      # shell (-l) so that bash sources nvm.sh at startup.
+      shell: "bash -l {0}"
+      # This ID is used to reference the output of this step later.
+      id: nvm_info
+      # This ::set-output syntax is GitHub Actions syntax to set an output
+      # variable.
+      run: echo ::set-output name=cache-dir::$(nvm cache dir)
+
+    # Attempt to restore nvm's cache from a prior run of the workflow.
+    - name: nvm cache
+      uses: actions/cache@v2
+      with:
+        path: "${{ steps.nvm_info.outputs.cache-dir }}"
+        # The cache key is based on the host OS and whatever's in .nvmrc.
+        key: "${{ runner.os }}-nvm-${{ hashFiles('.nvmrc') }}"
+        restore-keys: |
+          ${{ runner.os }}-nvm-
+
+    # Install the interpreter indicated in .nvmrc. If there was a cache hit
+    # this won't have to download anything.
+    - run: nvm install
+      shell: "bash -l {0}"
+
+    # Attempt to restore npm's cache from a prior run of the workflow.
+    - name: npm cache
+      uses: actions/cache@v2
+      with:
+        path: ~/.npm
+        # The cache key is based on the host OS and the lockfile. The "npm"
+        # segment differentiates it from the "nvm" cache.
+        key: "${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}"
+        restore-keys: |
+          ${{ runner.os }}-npm-
+
+    # Install dependencies.
+    - name: npm install
+      # You have to "nvm use" at the start of each step.
+      run: |
+        nvm use
+        npm install
+      shell: "bash -l {0}"
+
+    # Now, run your tests or whatever.
+    - name: test
+      run: |
+        nvm use
+        npm run test
+      shell: "bash -l {0}"
