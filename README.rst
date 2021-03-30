@@ -20,18 +20,6 @@ A GHA `run step`_ runs Bash with flags that skip sourcing that file, by default:
 
     bash --noprofile --norc -eo pipefail {0}
 
-``nvm`` will work if you manually source ``nvm.sh`` in your step:
-
-.. code-block:: yaml
-
-   jobs:
-    steps:
-    - run: |
-        source "$NVM_DIR"/nvm.sh
-        nvm install
-
-That ``NVM_DIR`` environment variable is `part of the GHA environment <https://github.com/actions/virtual-environments/blob/826fed960459993d41c2f9310d220b7cf2c015e8/images/linux/scripts/installers/nvm.sh#L11>`_.
-
 If you override the ``shell`` command to include the ``--login`` flag Bash will automatically do the sourcing:
 
 .. code-block:: yaml
@@ -42,9 +30,7 @@ If you override the ``shell`` command to include the ``--login`` flag Bash will 
         nvm install
       shell: "bash -eo pipefail --login {0}"
 
-Both of these are a bit of a mouthful to repeat on each step, though.
-
-.. TODO Explain the anchor trick
+This is a bit of a mouthful to repeat on each step, but that's what it takes.
 
 Enabling Caching
 ================
