@@ -24,7 +24,7 @@ jobs:
     - name: Introspect nvm
       # This step, and all others that use the nvm command, must run in a login
       # shell (-l) so that bash sources nvm.sh at startup.
-      shell: "bash -l {0}"
+      shell: "bash -eo pipefail -l {0}"
       # This ID is used to reference the output of this step later.
       id: nvm_info
       # This ::set-output syntax is GitHub Actions syntax to set an output
@@ -44,7 +44,7 @@ jobs:
     # Install the interpreter indicated in .nvmrc. If there was a cache hit
     # this won't have to download anything.
     - run: nvm install
-      shell: "bash -l {0}"
+      shell: "bash -eo pipefail -l {0}"
 
     # Attempt to restore npm's cache from a prior run of the workflow.
     - name: npm cache
@@ -63,11 +63,11 @@ jobs:
       run: |
         nvm use
         npm install
-      shell: "bash -l {0}"
+      shell: "bash -eo pipefail -l {0}"
 
     # Now, run your tests or whatever.
     - name: test
       run: |
         nvm use
         npm run test
-      shell: "bash -l {0}"
+      shell: "bash -eo pipefail -l {0}"
