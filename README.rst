@@ -5,6 +5,21 @@
 Using nvm on GitHub Actions
 ===========================
 
+.. note::
+
+  `actions/setup-node` now supports nvm-compatible Node version specifications.
+  To activate this:
+
+  .. code-block:: yaml
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+
+  This also builds in support for caching — see the `documentation <https://github.com/actions/setup-node#usage>`__.
+
+  The original article from 2021 continues below.
+
 GitHub Actions `virtual environments`_ (VM images) `include nvm`_, the `Node Version Manager <nvm>`_,
 the ``nvm`` command doesn't work by default on GitHub Actions (GHA).
 This document describes how to get it working,
